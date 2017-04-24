@@ -61,7 +61,6 @@ public class Comentarios
               //por lo que quedaria las lista incompleta 
          
               comentariosResultado = listaComentario.execute();
-                System.out.println(comentariosResultado.get("items").toString());
               return new JSONArray(comentariosResultado.get("items").toString());
 
             } 
