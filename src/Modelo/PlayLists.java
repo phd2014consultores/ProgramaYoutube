@@ -23,15 +23,14 @@ import org.json.JSONObject;
  */
 public class PlayLists 
 {
-    // This OAuth 2.0 access scope allows for full read/write access to the
-        // authenticated user's account.
+        //-----Stributos de la clase-----//
         private YouTube youtube;
         private String id;
         private String fecha;
         private String titulo;
         private String descripcion;
         private Map<String,PlayLists> tablaHash = new Hashtable<String,PlayLists>();
-        
+        //---------------------------------//
         
         public PlayLists(String fecha, String titulo, String descripcion) 
         {
@@ -43,6 +42,10 @@ public class PlayLists
         public PlayLists(){ }
 
         
+        /**
+         * Metodo que se encarga de listar los de id de cada playlist creado dentro del canal de youtube
+         * @return JSONArray
+         */
         public JSONArray listarPlaylistId()
         {
             PlaylistListResponse listaResultado = null;
@@ -57,7 +60,7 @@ public class PlayLists
                
          
               listaResultado = listaReproduccion.execute();
-         //     System.out.println("resultado "+listaResultado.get("items"));
+      
               return new JSONArray(listaResultado.get("items").toString());
 
             } 
@@ -69,7 +72,12 @@ public class PlayLists
           return null;
         }
         
-        
+        /**
+         * Metodo donde se crea una tabla hash con los datos obtenidos en JSONArray 
+         * donde el key son los playlistId y el value viene dado por un objeto de tipo 
+         * PlayList con los atributos fecha, titulo, descripcion
+         * @return Map<String,PlayLists> tabla hash
+         */
      public Map<String,PlayLists> listarInformacionPlayList()
      {
       JSONArray informacion = listarPlaylistId();
@@ -98,6 +106,7 @@ public class PlayLists
        return null;
      }
 
+     //---------- metodos get------------------------///
     public String getId() 
     {
         return id;
@@ -122,7 +131,7 @@ public class PlayLists
     {
         return tablaHash;
     }
-        
+    //---------------------------------------------------------//    
 }
 
 

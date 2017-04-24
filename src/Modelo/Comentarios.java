@@ -24,6 +24,8 @@ import org.json.JSONObject;
  */
 public class Comentarios 
 {
+    
+    //------------------Atributos de la clase------------------//
         private YouTube youtube;
         private String id;
         private String fecha;
@@ -32,8 +34,10 @@ public class Comentarios
         private boolean paginacion;
         private String codigoPagina = "";
         private Map<String,Comentarios> tablaHash = new Hashtable<String,Comentarios>();
+     //----------------------------------------------------------------//   
         
         
+     //----------------------------Contructores de la clase-----------------------//   
         public Comentarios(String fecha, String nombre, String textoOriginal) 
         {
             this.fecha = fecha;
@@ -51,27 +55,35 @@ public class Comentarios
                
             }
          }
-
+       //------------------------------------------------//
+        
+        
+         /**
+         * Metodo que se encarga de listar los de id de cada comentario creado sobre video publicado
+         * se tiene el parametro paginacion ya que youtube divide todos los comentarios del video 
+         * en diferentes paginas, el maximo numero de comentarios por pagina son de 100, y el minimo por 
+         * defecto es de 20
+         * @param String PlayListId
+         * @param boolean paginacion
+         * @return JSONArray
+         */
         
         public JSONArray listarComentariosId(String VideoId,boolean paginacion)
         {
             CommentThreadListResponse comentariosResultado = null;
             try 
             {
-                
-              
-                              
               YouTube.CommentThreads.List listaComentario = youtube.commentThreads().list("snippet");
-              //listaComentario.setFields("items");
+             
               listaComentario.setVideoId(VideoId);
               listaComentario.setOrder("time");
               listaComentario.setMaxResults(Long.valueOf(100));
               
+              //condicion que permite insertar el id de las proxima de pagina donde se encuentra los 
+              //comentarios del mismo video
               if(this.paginacion)
                 listaComentario.setPageToken(this.codigoPagina);
-              //Importante generar condicion de page token debido a que cada pagina tiene una cantidad de videos
-              //por lo que quedaria las lista incompleta 
-         
+             
               comentariosResultado = listaComentario.execute();
               
               if(comentariosResultado.get("nextPageToken")==null)
@@ -99,7 +111,13 @@ public class Comentarios
           return null;
         }
         
-        
+          /**
+         * Metodo donde se crea una tabla hash con los datos obtenidos en JSONArray 
+         * donde el key son los playlistId y el value viene dado por un objeto de tipo 
+         * PlayList con los atributos fecha, nombre del usuario, coemtario posteado
+         * @param String VideoId
+         * @return Map<String,Comentarios> tabla hash
+         */
      public Map<String,Comentarios> listarInformacionComentarios(String VideoId)
      {
       JSONArray informacion = listarComentariosId(VideoId,paginacion);
@@ -141,6 +159,7 @@ public class Comentarios
        return null;
      }
 
+     //---------- metodos get------------------------///
     public String getId() 
     {
         return id;
@@ -165,7 +184,7 @@ public class Comentarios
     {
         return tablaHash;
     }  
-    
+   //---------------------------------------------------// 
     
     
 }//fin de la clase

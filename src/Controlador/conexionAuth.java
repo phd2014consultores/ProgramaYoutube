@@ -6,31 +6,19 @@
 package Controlador;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.StoredCredential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.api.client.util.store.DataStore;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
@@ -50,20 +38,39 @@ public class conexionAuth
      */
     private static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
+    //se coloca el cliente id obtenido en la pagina google Api COnsole de la cuenta google, para ello se debe crear 
+    //un nuevo proyecto Id de cliente OAuth
     private static final String CLIENT_ID = "91851742346-amlq37mkdgf7aahmibn2vk8ttfe48gb6.apps.googleusercontent.com";
     
+    //se coloca el client secret obtenido en el google Api Console
     private static final String CLIENT_SECRET = "gYHnJHeNC-oZJIPb22uAWTru";
     
+    
+    //se coloca el token obtenido de la pagina OAuth 2.0 Playground que permite actualizar el tiempo de duracion del
+    //token, su duracion es de maximo una hora 
     private static final String REFRESH_TOKEN = "1/Zo9IlDxoackzR1Olkw5uSRUQrBk9sWt5ZLp5KicBiosB_TAzKs969uSCI5RpCIKS";
     
+    //Id del canal de youtube, por efectos practicos se coloco constante ya que es un solo canal, ahora bien este id puede 
+    //obtenerse de la misma forma que se obtienen los id PlayList, id video o id Comentario. Esto es cuando se manejen 
+    //de un canal con la misma cuenta de google
     private static final String CHANNEL_ID = "UCSuZpSq2Wyy3ys7B5DxStKw";
     
+    /**
+     * metodo que se encarga de establecer comunicacion con la cuenta google segun las credenciales previamente autorizadas
+     * @return YouTube
+     * @throws IOException 
+     */
     public static YouTube comandos() throws IOException
     {
-      return new YouTube.Builder(conexionAuth.HTTP_TRANSPORT, conexionAuth.JSON_FACTORY, Autorizar()).setApplicationName("youtube-cmdline-localizations-sample").build();
+      return new YouTube.Builder(conexionAuth.HTTP_TRANSPORT, conexionAuth.JSON_FACTORY, Autorizar()).setApplicationName("Programa de YouTube").build();
     }
 
-
+    /**
+     * Metodo que verifica CLIENT_ID,CLIENT_SECRET y REFRESH_TOKEN, y autoriza las credenciales necesarias para establecer
+     * la comunicacion con la cuenta google
+     * @return Credential
+     * @throws IOException 
+     */
     private static Credential Autorizar() throws IOException
     {
         GoogleCredential.Builder builder = new GoogleCredential.Builder();
@@ -74,12 +81,15 @@ public class conexionAuth
         Credential credential = builder.build();
         credential.setAccessToken(REFRESH_TOKEN);
         credential.setRefreshToken(getAccessToken());
-       // System.out.println(getAccessToken());
-        // Authorize.
+   
         return credential;
     }
     
-    
+    /**
+     * Metodo que se encarga de autualizar el token para evitar fallos de comunicacion por 
+     * token expirado
+     * @return String
+     */
     private static String getAccessToken()
     {
        try

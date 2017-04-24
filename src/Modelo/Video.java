@@ -24,23 +24,32 @@ import org.json.JSONObject;
  */
 public class Video 
 {
+    //------------------Atributos de la clase---------------------//
         private YouTube youtube;
         private String id;
         private String fecha;
         private String titulo;
         private String descripcion;
         private Map<String,Video> tablaHash = new Hashtable<String,Video>();
+    //--------------------------------------------------------------//
         
         
+      //-----------------------Constructores de la clase----------------//  
         public Video(String fecha, String titulo, String descripcion) 
         {
             this.fecha = fecha;
             this.titulo = titulo;
             this.descripcion = descripcion;
         }
-
+     
         public Video(){ }
-
+      //--------------------------------------------------------------------------//
+        
+          /**
+         * Metodo que se encarga de listar los de id de cada video creado dentro del playlist
+         * @param String PlayListId 
+         * @return JSONArray
+         */
         
         public JSONArray listarVideoId(String PlayListId)
         {
@@ -70,7 +79,13 @@ public class Video
           return null;
         }
         
-        
+         /**
+         * Metodo donde se crea una tabla hash con los datos obtenidos en JSONArray 
+         * donde el key son los playlistId y el value viene dado por un objeto de tipo 
+         * PlayList con los atributos fecha, titulo, descripcion
+         * @param String PlayListId
+         * @return Map<String,Video> tabla hash
+         */
      public Map<String,Video> listarInformacionVideo(String PlayListId)
      {
       JSONArray informacion = listarVideoId(PlayListId);
@@ -100,6 +115,7 @@ public class Video
        return null;
      }
 
+     //---------- metodos get------------------------///
     public String getId() 
     {
         return id;
@@ -124,4 +140,6 @@ public class Video
     {
         return tablaHash;
     }  
+    
+    //-----------------------------------------------//
 }
