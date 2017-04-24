@@ -32,11 +32,11 @@ public class Comentarios
         private Map<String,Comentarios> tablaHash = new Hashtable<String,Comentarios>();
         
         
-        public Comentarios(String fecha, String titulo, String descripcion) 
+        public Comentarios(String fecha, String nombre, String textoOriginal) 
         {
             this.fecha = fecha;
-            this.nombre = titulo;
-            this.textoOriginal = descripcion;
+            this.nombre = nombre;
+            this.textoOriginal = textoOriginal;
         }
 
         public Comentarios(){ }
@@ -61,7 +61,7 @@ public class Comentarios
               //por lo que quedaria las lista incompleta 
          
               comentariosResultado = listaComentario.execute();
-         
+                System.out.println(comentariosResultado.get("items").toString());
               return new JSONArray(comentariosResultado.get("items").toString());
 
             } 
@@ -85,13 +85,13 @@ public class Comentarios
          for (int i = 0; i < informacion.length(); i++)
          {
              dato = informacion.getJSONObject(i);
-             lista = new Comentarios(((JSONObject)dato.get("snippet")).get("publishedAt").toString(),
-                                   ((JSONObject)dato.get("snippet")).get("authorDisplayName").toString(),
-                                   ((JSONObject)dato.get("snippet")).get("textOriginal").toString());
-             
-                         
-             tablaHash.put(((JSONObject)dato.get("snippet")).get("id").toString(), lista);
-             
+//              System.out.println(dato);
+             lista = new Comentarios(((JSONObject)((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("snippet")).get("publishedAt").toString(),
+                                     ((JSONObject)((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("snippet")).get("authorDisplayName").toString(),
+                                     ((JSONObject)((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("snippet")).get("textOriginal").toString());
+                               
+           tablaHash.put(((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("id").toString(), lista);
+              
          }
          return tablaHash;
        }
@@ -113,12 +113,12 @@ public class Comentarios
         return fecha;
     }
 
-    public String getTitulo() 
+    public String getnombre() 
     {
         return nombre;
     }
 
-    public String getDescripcion() 
+    public String gettextoOriginal() 
     {
         return textoOriginal;
     }
