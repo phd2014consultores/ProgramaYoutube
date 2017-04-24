@@ -27,16 +27,16 @@ public class Comentarios
       private YouTube youtube;
         private String id;
         private String fecha;
-        private String titulo;
-        private String descripcion;
+        private String nombre;
+        private String textoOriginal;
         private Map<String,Comentarios> tablaHash = new Hashtable<String,Comentarios>();
         
         
         public Comentarios(String fecha, String titulo, String descripcion) 
         {
             this.fecha = fecha;
-            this.titulo = titulo;
-            this.descripcion = descripcion;
+            this.nombre = titulo;
+            this.textoOriginal = descripcion;
         }
 
         public Comentarios(){ }
@@ -86,11 +86,11 @@ public class Comentarios
          {
              dato = informacion.getJSONObject(i);
              lista = new Comentarios(((JSONObject)dato.get("snippet")).get("publishedAt").toString(),
-                                   ((JSONObject)dato.get("snippet")).get("title").toString(),
-                                   ((JSONObject)dato.get("snippet")).get("description").toString());
+                                   ((JSONObject)dato.get("snippet")).get("authorDisplayName").toString(),
+                                   ((JSONObject)dato.get("snippet")).get("textOriginal").toString());
              
                          
-             tablaHash.put(((JSONObject)((JSONObject)dato.get("snippet")).get("resourceId")).get("videoId").toString(), lista);
+             tablaHash.put(((JSONObject)dato.get("snippet")).get("id").toString(), lista);
              
          }
          return tablaHash;
@@ -115,12 +115,12 @@ public class Comentarios
 
     public String getTitulo() 
     {
-        return titulo;
+        return nombre;
     }
 
     public String getDescripcion() 
     {
-        return descripcion;
+        return textoOriginal;
     }
 
     public Map<String,Comentarios> getTablaHash()
