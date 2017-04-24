@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Controlador;
+import Modelo.Comentarios;
 import Modelo.PlayLists;
 import Modelo.Video;
 import java.util.Map;
@@ -32,17 +33,33 @@ public class YoutubeApp {
 //             System.out.println("Descripcion "+value.getDescripcion());    
 //        }
         
-         Map<String,Video> tablaHash = new Video().listarInformacionVideo("PLfqTGfx-MToOMn_NQvj1oUnrlY36ppupC");
+//        Map<String,Video> tablaHash = new Video().listarInformacionVideo("PLfqTGfx-MToOMn_NQvj1oUnrlY36ppupC");
+//        
+//        for (Map.Entry<String, Video> entry:tablaHash.entrySet()) 
+//        {
+//         String key = entry.getKey();
+//         Video value = entry.getValue();
+//         System.out.println("id Video "+key);
+//             System.out.println("Fecha de publicacion "+value.getFecha());
+//             System.out.println("Titulo "+value.getTitulo());
+//             System.out.println("Descripcion "+value.getDescripcion()+"\n");    
+//        }
         
-        for (Map.Entry<String, Video> entry:tablaHash.entrySet()) 
+        
+        Map<String,Comentarios> tablaHash = new Comentarios().listarInformacionComentarios("o8ZnCT14nRc");
+        int n = 0;
+        for (Map.Entry<String, Comentarios> entry:tablaHash.entrySet()) 
         {
          String key = entry.getKey();
-         Video value = entry.getValue();
-         System.out.println("id Video "+key);
-             System.out.println("Fecha de publicacion "+value.getFecha());
-             System.out.println("Titulo "+value.getTitulo());
-             System.out.println("Descripcion "+value.getDescripcion()+"\n");    
+         Comentarios value = entry.getValue();
+        // System.out.println("id "+key);
+         System.out.println("Fecha de publicacion "+value.getFecha());
+         System.out.println("Nombre "+value.getnombre());
+         System.out.println("Comentario "+value.gettextoOriginal()+"\n");    
+        
+          n++;
         }
+        System.out.println(n);
     }
     
 }
