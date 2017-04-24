@@ -24,11 +24,13 @@ import org.json.JSONObject;
  */
 public class Comentarios 
 {
-      private YouTube youtube;
+        private YouTube youtube;
         private String id;
         private String fecha;
         private String nombre;
         private String textoOriginal;
+        private boolean paginacion;
+        private String codigoPagina = "";
         private Map<String,Comentarios> tablaHash = new Hashtable<String,Comentarios>();
         
         
@@ -39,28 +41,53 @@ public class Comentarios
             this.textoOriginal = textoOriginal;
         }
 
-        public Comentarios(){ }
+        public Comentarios()
+        { 
+           try 
+            {
+              youtube = conexionAuth.comandos();
+            } 
+              catch (IOException ex) {
+               
+            }
+         }
 
         
-        public JSONArray listarComentariosId(String VideoId)
+        public JSONArray listarComentariosId(String VideoId,boolean paginacion)
         {
             CommentThreadListResponse comentariosResultado = null;
             try 
             {
                 
-              youtube = conexionAuth.comandos();
+              
                               
               YouTube.CommentThreads.List listaComentario = youtube.commentThreads().list("snippet");
-              listaComentario.setFields("items");
+              //listaComentario.setFields("items");
               listaComentario.setVideoId(VideoId);
               listaComentario.setOrder("time");
               listaComentario.setMaxResults(Long.valueOf(100));
               
-                
+              if(this.paginacion)
+                listaComentario.setPageToken(this.codigoPagina);
               //Importante generar condicion de page token debido a que cada pagina tiene una cantidad de videos
               //por lo que quedaria las lista incompleta 
          
               comentariosResultado = listaComentario.execute();
+              
+              if(comentariosResultado.get("nextPageToken")==null)
+              {
+                    this.paginacion = false;
+                    this.codigoPagina = "";
+                    System.out.println("Ya no hay mas paginas.......");
+              }
+              else
+              {
+                  this.codigoPagina = comentariosResultado.get("nextPageToken").toString();
+                  this.paginacion = true;
+             
+              }
+              
+           //   System.out.println(this.codigoPagina);
               return new JSONArray(comentariosResultado.get("items").toString());
 
             } 
@@ -75,7 +102,7 @@ public class Comentarios
         
      public Map<String,Comentarios> listarInformacionComentarios(String VideoId)
      {
-      JSONArray informacion = listarComentariosId(VideoId);
+      JSONArray informacion = listarComentariosId(VideoId,paginacion);
       JSONObject dato;
       Comentarios lista;
       
@@ -84,19 +111,31 @@ public class Comentarios
          for (int i = 0; i < informacion.length(); i++)
          {
              dato = informacion.getJSONObject(i);
-//              System.out.println(dato);
+          //   System.out.println(dato);
              lista = new Comentarios(((JSONObject)((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("snippet")).get("publishedAt").toString(),
                                      ((JSONObject)((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("snippet")).get("authorDisplayName").toString(),
                                      ((JSONObject)((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("snippet")).get("textOriginal").toString());
                                
-           tablaHash.put(((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("id").toString(), lista);
+            tablaHash.put(((JSONObject)((JSONObject)dato.get("snippet")).get("topLevelComment")).get("id").toString(), lista);
               
          }
+         
+         if(paginacion)
+         { 
+           //  System.out.println("Veces "+(n++));
+             listarInformacionComentarios(VideoId);
+         }
+         
          return tablaHash;
        }
        catch (JSONException ex) 
        {
-            
+            System.out.println("Entro aqui......"+ex);
+            if(paginacion)
+            { 
+           //  System.out.println("Veces "+(n++));
+              listarInformacionComentarios(VideoId);
+            }
        }
      
        return null;
